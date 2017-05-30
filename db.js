@@ -11,10 +11,11 @@ exports.connect = function(done) {
 
     state.pool = mysql.createPool({
         host: 'localhost',
-        user: 'tg',
-        password: 'Yrkesvm09',
+        user: 'tempdata_app',
+        password: 'thetempdatapass',
         database: 'data'
     });
+
 
     done();
 }

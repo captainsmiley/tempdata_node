@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h1= title
+    div
+        p Welcome to #{title}
+        p Showing data from #{time}
+            div
+                canvas#myChart(width='400', height='400')
+
+    script(src="/javascripts/charts.js")
+    script(src="/javascripts/jquery-3.2.1.js")
+    script(src="/javascripts/temp_chart.js")
+    script getAllData('#{time}')
