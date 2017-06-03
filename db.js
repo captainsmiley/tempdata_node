@@ -13,7 +13,8 @@ exports.connect = function(done) {
         host: 'localhost',
         user: 'tempdata_app',
         password: 'thetempdatapass',
-        database: 'data'
+        database: 'data',
+        timezone: 'utc'
     });
 
 

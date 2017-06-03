@@ -1,21 +1,10 @@
-
 var ctx = document.getElementById("myChart");
-
-/*
-var chart_data = [ 
-    {x: "2000-01-12", y: 25.5},
-    {x: "2000-01-13", y: 23.1} 
-];
-*/
-
-
-
 
 var myChart = new Chart(ctx, {
     type: 'line',
     data: {
         datasets: [{
-            label: '# of Votes',
+            label: 'data',
             data: null ,
             backgroundColor: 
                 'rgba(255, 99, 132, 0.2)',
@@ -30,13 +19,15 @@ var myChart = new Chart(ctx, {
                 type: 'time',
                 time: { 
                     displayFormats: {
-                        quarter: 'YYYY MM HH:MM'
+                        second: 'mm:ss',
+                        minute: 'HH:mm',
+                        hour: 'DD/MM HH'
                     }
                 }
             }],
             yAxes: [{
                 ticks: {
-                    beginAtZero:true
+                    beginAtZero:false
                 }
             }]
         }
@@ -53,7 +44,6 @@ $(function(){
         type: 'GET',
         success : function(data) {
             myChart.data.datasets[0].data = data;
-            console.log(data);
             myChart.update();;
         }
     });

@@ -1,35 +1,36 @@
 var db = require('../db.js')
 
 
-exports.build_table = function(){
-    db.get().query("CREATE TABLE IF NOT EXISTS tempdata ("+
+
+exports.build_table = function(data_name){
+    db.get().query("CREATE TABLE IF NOT EXISTS "+ data_name + " ("+
         "id INT AUTO_INCREMENT PRIMARY KEY," +
         "time DATETIME,"+
-        "temp DECIMAL(5,2)"+
+        "value DECIMAL(5,2)"+
     ")"
         ,function (err,result) {
         if (err) throw err;
-            console.log("Table created");
+            console.log('Table #{data_name} created');
         });
 }
 
 
-
-exports.create = function(dateTime,temp,done) {
+exports.create = function(data_name,dateTime,value,done) {
     var values = [dateTime.toISOString().
         replace(/T/,' ').
         replace(/\..+/,''),
         temp]
     console.log(dateTime);
     console.log(values);
-    db.get().query('INSERT INTO tempdata (time, temp) VALUES(?,?)', values, function (err,result) {
+    db.get().query('INSERT INTO '+data_name+" (time, value) VALUES(?,?)', values, function (err,result) {
         if (err) return done(err)
         done(null,result.insertId)
     })
 }
 
-exports.getAll = function(done) {
-    db.get().query('SELECT * FROM tempdata', function(err,rows) {
+
+exports.getAll = function(data_name,done) {
+    db.get().query('SELECT * FROM '+data_name+', function(err,rows) {
         if (err) return done(err)
         done(null,rows)
     })
