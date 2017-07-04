@@ -20,6 +20,7 @@ exports.connect = function(done) {
 
     done();
 }
+    
 
 exports.get = function() {
     return state.pool

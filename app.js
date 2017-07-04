@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var tempdata = require('./routes/tempdata');
+var data_r = require('./routes/data');
 
 
 var app = express();
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/temp', tempdata);
+app.use('/data', data_r);
 
 
 // database setup

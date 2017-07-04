@@ -1,9 +1,8 @@
 extends layout
 
 block content
-    h1= title
+    h1 Showing #{name} from #{from} to #{to}
     div
-        p Welcome to #{title}
         p Showing data from #{time}
             div
                 canvas#myChart(width='400', height='400')
@@ -45,16 +44,27 @@ block content
 
         function getAllData(t) {
         $(function(){
-        var u = '/temp/tempdata';
-        if (t != '')
-        u = '/temp/tempdatafrom/'+t;
+        var u = '/data/#{name}/#{from}/#{to}';
+        //if (t != '')
+        //u = '/temp/tempdatafrom/'+t;
         $.ajax({url: u,
         type: 'GET',
         success : function(data) {
         myChart.data.datasets[0].data = data;
         myChart.update();;}});
         });}
-    script getAllData('#{time}')
+        function getData() {
+        $(function(){
+        var u = '/data/read/#{name}/#{from}/#{to}';
+        //if (t != '')
+        //u = '/temp/tempdatafrom/'+t;
+        $.ajax({url: u,
+        type: 'GET',
+        success : function(data) {
+        myChart.data.datasets[0].data = data;
+        myChart.update();;}});
+        });}
+    script getData()
     script.
         $(document).ready(function(){
             var p = $("#tgtest");

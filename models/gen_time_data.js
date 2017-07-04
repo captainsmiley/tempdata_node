@@ -6,18 +6,43 @@ function Data(name) {
     //console.log(this.name + " created");
 }
 
+Data.prototype.addColumnIfNotExists = function (column_name,column_definition) {
+    var name = this.name;
+    return new Promise(function (resolve,reject) {
+
+        db.get().query(
+           /* "IF NOT EXISTS( SELECT NULL \n"+
+                "FROM INFORMATION_SCHEMA.COLUMNS \n"+
+                "WHERE table_name = "+name+" "+
+                "AND column_name = "+column_name+") THEN "+ */
+                "ALTER TABLE "+name+" ADD COLUMN "+column_name+" "+column_definition+";"
+               // "END IF;"
+            ,function (err, result) {
+                if (err) reject(err);
+                else resolve();
+            });
+    });
+}
+
 
 Data.prototype.build_table = function(){
     var name = this.name;
-    db.get().query("CREATE TABLE IF NOT EXISTS "+ name+ " ("+
-        "id INT AUTO_INCREMENT PRIMARY KEY," +
-        "time DATETIME,"+
-        "value DECIMAL(5,2)"+
-    ")"
-        ,function (err,result) {
-        if (err) throw err;
-            console.log('Table '+name+' created');
-        });
+    return new Promise(function(resolve, reject) {
+        db.get().query("CREATE TABLE IF NOT EXISTS "+ name+ " ("+
+            "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "time DATETIME,"+
+                "value DECIMAL(5,2)"+
+                ")"
+            ,function (err,result) {
+                if (err){
+                    reject(err);
+                }
+                else {
+                    console.log('Table '+name+' created or exists');
+                    resolve();
+                }
+            });
+    });
 }
 
 
@@ -25,7 +50,7 @@ Data.prototype.create = function(dateTime,value,done) {
     var data_name = this.name;
     var values = [dateTime.toISOString().
         replace(/T/,' ').
-        replace(/\..+/,''),
+            replace(/\..+/,''),
         value]
     console.log(dateTime);
     console.log(values);
@@ -45,12 +70,12 @@ Data.prototype.getAll = function(done) {
 }
 
 function toXy(rows) {
-        var data = [];
-        for(i=0; i<rows.length; i++) {
-            var t = new Date(rows[i].time);
-            console.log(rows[i].time);
-            data.push({x: t, y: rows[i].temp});
-        }
+    var data = [];
+    for(i=0; i<rows.length; i++) {
+        var t = new Date(rows[i].time);
+        //console.log(rows[i].time);
+        data.push({x: t, y: rows[i].value});
+    }
     return data;
 }
 
@@ -78,10 +103,26 @@ Data.prototype.getAllFromTime_xy = function(time, done) {
     db.get().query(
         'SELECT * FROM '+name+' where time >= \''+value+'\' '
         , function(err,rows) {
-        if (err) return done(err)
-        var data = toXy(rows);
-        done(null,data)
-    })
+            if (err) return done(err)
+            var data = toXy(rows);
+            done(null,data)
+        })
+}
+Data.prototype.getFromTo_xy = function(from,to,done) {
+    var name = this.name;
+    var from_value = from.toISOString().
+        replace(/T/,' ').
+        replace(/\..+/,'');
+    var to_value = to.toISOString().
+        replace(/T/,' ').
+        replace(/\..+/,'');
+    db.get().query(
+        'SELECT * FROM '+name+' where time >= \''+from_value+'\' and time <= \''+to_value+'\' '
+        , function(err,rows) {
+            if (err) return done(err)
+            var data = toXy(rows);
+            done(null,data)
+        })
 }
 
 module.exports = Data;
